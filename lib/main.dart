@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:getx/value_controller.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,31 +17,21 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(),
+      home: MyHomePage(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key}) : super(key: key);
+class MyHomePage extends StatelessWidget {
+  MyHomePage({Key? key}) : super(key: key);
 
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
   final textController = TextEditingController();
-  String definedValue = "";
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
+  final valueController = ValueController();
 
   @override
   Widget build(BuildContext context) {
+    print("criou arvore");
     return Scaffold(
       appBar: AppBar(
         title: const Text("Get X"),
@@ -48,29 +40,39 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              'Valor Definido $definedValue',
+            GetBuilder<ValueController>(
+              init: valueController,
+              initState: (_) {},
+              builder: (ctrl) {
+                print("criou GetBuilder");
+                return Text(
+                  'Valor Definido ${ctrl.definedValue}',
+                );
+              },
             ),
             TextField(
               controller: textController,
             ),
-            ElevatedButton(
-              onPressed: () {
-                String v = textController.text;
-                setState(() {
-                  definedValue = v;
-                });
-                print(v);
+            GetBuilder<ValueController>(
+              init: valueController,
+              initState: (_) {},
+              builder: (ctrl) {
+                return ctrl.isLoading
+                    ? const CircularProgressIndicator()
+                    : ElevatedButton(
+                        onPressed: () {
+                          String v = textController.text;
+
+                          valueController.setValue(v);
+
+                          print(v);
+                        },
+                        child: const Text("Confirmar"),
+                      );
               },
-              child: const Text("Confirmar"),
             )
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
       ),
     );
   }
