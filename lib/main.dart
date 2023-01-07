@@ -40,24 +40,27 @@ class MyHomePage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            GetBuilder<ValueController>(
+            GetX<ValueController>(
               init: valueController,
               initState: (_) {},
               builder: (ctrl) {
-                print("criou GetBuilder");
+                print("criou GetX");
                 return Text(
                   'Valor Definido ${ctrl.definedValue}',
                 );
               },
             ),
-            TextField(
-              controller: textController,
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 32),
+              child: TextField(
+                controller: textController,
+              ),
             ),
-            GetBuilder<ValueController>(
+            GetX<ValueController>(
               init: valueController,
               initState: (_) {},
               builder: (ctrl) {
-                return ctrl.isLoading
+                return ctrl.isLoading.value
                     ? const CircularProgressIndicator()
                     : ElevatedButton(
                         onPressed: () {
